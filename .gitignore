@@ -1,0 +1,7 @@
+# Runtime state, not source
+data/
+*.pid
+*.log
+__pycache__/
+*.pyc
+node_modules/
