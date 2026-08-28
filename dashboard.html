@@ -172,6 +172,47 @@ details.b-deep summary{cursor:pointer;list-style:revert}
 .askchip{border:1px solid var(--line);border-radius:20px;padding:5px 12px;font-size:12.5px;
   cursor:pointer;background:var(--bg)}
 .askchip:hover{border-color:var(--s5,#8b5cf6)}
+/* ---- counsel widget ---- */
+#cwLaunch{position:fixed;right:22px;bottom:22px;z-index:60;width:56px;height:56px;
+  border-radius:50%;border:0;cursor:pointer;font-size:26px;line-height:1;
+  background:linear-gradient(145deg,#7c3aed,#b45309);color:#fff;
+  box-shadow:0 10px 30px rgba(0,0,0,.28)}
+#cwLaunch:hover{transform:translateY(-2px)}
+#cwPanel{position:fixed;right:22px;bottom:88px;z-index:60;width:min(420px,calc(100vw - 32px));
+  max-height:min(74vh,680px);display:none;flex-direction:column;
+  background:var(--bg);border:1px solid var(--line);border-radius:16px;overflow:hidden;
+  box-shadow:0 18px 60px rgba(0,0,0,.32)}
+#cwPanel.on{display:flex}
+#cwHead{display:flex;align-items:center;gap:8px;padding:11px 14px;
+  background:linear-gradient(145deg,#7c3aed,#b45309);color:#fff}
+#cwHead .cw-sub{opacity:.85;font-size:12px}
+#cwHead button{background:none;border:0;color:#fff;cursor:pointer;font-size:15px;opacity:.9}
+#cwGate{padding:16px;display:none}
+#cwGate.on{display:block}
+#cwGate p{margin:0 0 10px;font-size:13px;line-height:1.6}
+.cw-note{color:var(--muted);font-size:11.5px;margin:-4px 0 14px}
+.cw-btn{width:100%;padding:10px;border-radius:10px;border:1px solid var(--line);
+  background:var(--s5,#7c3aed);color:#fff;font:inherit;font-weight:600;cursor:pointer}
+.cw-btn.ghost{background:var(--bg);color:var(--muted);cursor:not-allowed}
+#cwBody{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px}
+.cw-g{display:flex;gap:8px;align-items:flex-start;line-height:1.62;font-size:14px}
+.cw-g p{margin:6px 0 0}
+.cw-spk{background:none;border:0;cursor:pointer;font-size:14px;opacity:.55;padding:0;line-height:1.4}
+.cw-spk:hover{opacity:1}
+.cw-u{align-self:flex-end;max-width:85%;background:var(--s5,#7c3aed);color:#fff;
+  padding:8px 12px;border-radius:14px 14px 4px 14px;font-size:14px;line-height:1.55}
+.cw-v{border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:13.5px}
+.cw-vh{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.cw-open{margin-left:auto;background:none;border:0;color:var(--s5,#7c3aed);cursor:pointer;font-size:12px}
+.cw-sa{line-height:1.8;margin-bottom:5px}
+.cw-tr{font-style:italic;color:var(--muted);font-size:12.5px;margin-bottom:6px}
+.cw-v audio{width:100%;height:32px;margin:6px 0}
+#cwFoot{display:flex;gap:8px;padding:10px;border-top:1px solid var(--line)}
+#cwIn{flex:1;resize:none;border:1px solid var(--line);border-radius:10px;padding:8px 10px;
+  font:inherit;font-size:14px;background:var(--bg);color:var(--fg)}
+#cwSend{border:0;border-radius:10px;padding:0 16px;background:var(--s5,#7c3aed);color:#fff;
+  font:inherit;font-weight:600;cursor:pointer}
+@media(max-width:520px){#cwPanel{right:8px;left:8px;width:auto;bottom:80px}}
 </style>
 </head>
 <body>
@@ -181,6 +222,8 @@ details.b-deep summary{cursor:pointer;list-style:revert}
   <div class="sub">700 shlokas · Sanskrit ▸ Telugu ▸ English · NLP · Chakras · Psyche · Sadhana · Mukti</div></div>
   <div class="spacer"></div>
   <button class="hbtn" id="randomBtn" title="Random shloka">🎲 Random shloka</button>
+  <span class="hbtn" id="todayDate" style="cursor:default"></span>
+  <button class="hbtn" id="toneBtn" title="A steady 369 Hz tone, kept low">🔇 369 Hz off</button>
   <button class="hbtn" id="themeBtn">🌙 Dark</button>
 </header>
 <nav class="tabs" id="tabs">
@@ -309,6 +352,30 @@ details.b-deep summary{cursor:pointer;list-style:revert}
   </div>
 </div>
 
+
+<!-- ===================== COUNSEL WIDGET ===================== -->
+<button id="cwLaunch" title="Ask the Gita">🪔</button>
+<div id="cwPanel" aria-live="polite">
+  <div id="cwHead">
+    <b>Counsel</b>
+    <span class="cw-sub">from the 701</span>
+    <span style="flex:1"></span>
+    <button id="cwClear" title="Start again">⟲</button>
+    <button id="cwClose" title="Close">✕</button>
+  </div>
+  <div id="cwGate">
+    <p>Your conversation can be kept so you are not starting again each time.</p>
+    <button class="cw-btn" data-mode="local">Continue without signing in</button>
+    <p class="cw-note">Kept on this device only. Nothing leaves your browser.</p>
+    <button class="cw-btn ghost" data-mode="account" disabled>Sign in to keep across devices</button>
+    <p class="cw-note">Not built yet — see the note in the project README.</p>
+  </div>
+  <div id="cwBody"></div>
+  <div id="cwFoot">
+    <textarea id="cwIn" rows="2" placeholder="Say what is true…"></textarea>
+    <button id="cwSend">Send</button>
+  </div>
+</div>
 </main>
 <footer>
 Sources: Sanskrit text, IAST &amp; word-meanings from the open <a href="https://github.com/gita/gita" style="color:var(--saffron)">gita/gita</a> dataset · English translations: Swami Sivananda (primary), Shri Purohit Swami (alternate) · Telugu script generated by Devanagari→Telugu transliteration; Telugu bhavam is a fresh concise rendering — for deep study cross-check a printed Telugu Gita (e.g. Gita Press / TTD). Interpretive lenses (NLP, chakra, psychology) are a contemplative mapping, offered as study aids, not scriptural claims. 🕉️ సర్వం శ్రీకృష్ణార్పణమస్తు
@@ -808,7 +875,7 @@ document.addEventListener('keydown',e=>{
    owed a considered sentence, not an improvisation. */
 const CONCEPTS = [
  {n:"Anxiety about the future",
-  k:["anxious","anxiety","worried","worry","fear","afraid","scared","panic","nervous","uncertain","insecure","what if","overthinking","dread","apprehensive","restless about"],
+  k:["anxious","anxiety","worried","worry","fear","afraid","scared","panic","nervous","uncertain","insecure","what if","overthinking","dread","apprehensive","restless about","terrified","terror","petrified","dreading","cannot sleep for worry"],
   x:["fear","anxiety","doubt","future","result","fruit","outcome","attachment","steady","equanimity","calm"],
   f:"Anxiety is almost always about a result you cannot command. The Gita's central move is to separate what is yours — the effort, the preparation, the quality of the act — from what never was: how it lands. That is not resignation. It is the only place your strength actually reaches.",
   v:[[2,47],[2,48],[18,66],[2,14]]},
@@ -973,6 +1040,16 @@ function searchVerses(q, concepts){
     let dot = 0;
     for (const [id, w] of Object.entries(qv)){ const dw = d.t[id]; if (dw) dot += w * dw; }
     let score = dot / norm;
+    /* Some passages describe rather than counsel: the roll-call of armies, the
+       catalogue of divine manifestations, and above all the vision of the
+       universal form, whose vocabulary is full of terror and blazing mouths.
+       Retrieval matches those words literally, so a person who writes that
+       they are terrified gets handed a description of something terrifying.
+       Damped, not removed -- they can still surface if truly relevant. */
+    const narrative = (d.c === 1 && d.v <= 27) ||
+                      (d.c === 11 && d.v >= 5 && d.v <= 50) ||
+                      (d.c === 10 && d.v >= 20 && d.v <= 42);
+    if (narrative) score *= 0.42;
     // A curated verse for this difficulty is lifted, never inserted blindly:
     // it still has to have scored something to appear.
     if (anchor.has(d.c + "." + d.v)) score += 0.28;
@@ -1035,6 +1112,282 @@ $$('#askChips .askchip').forEach(el => el.onclick = () => {
   $('#askQ').value = c ? c.k.slice(0, 3).join(', ') : el.dataset.n;
   askGita();
 });
+
+/* ============ COUNSEL WIDGET ============ */
+/* ============ THE COUNSEL WIDGET ============
+   A conversation, not a search box. It sits bottom-right, opens on click, and
+   keeps its history so a returning reader is not starting again.
+
+   Why it reads the way it does: a person describing something painful and
+   getting back a paragraph of retrieved text feels like being processed. So
+   the exchange has beats -- it reflects back what it heard in the person's own
+   words, asks one question that goes underneath the surface complaint, and
+   only then answers. Every line has several variants chosen at random, because
+   the same sentence twice is what makes a thing feel like a machine.
+
+   The voice is deliberate: direct, unhedged, warm underneath. Krishna does not
+   reassure Arjuna and does not soften the position. */
+
+const CV = {           /* conversational variants */
+  open: [
+    "Tell me what is sitting on you. Say it plainly — you do not have to make it presentable.",
+    "Speak. What is the thing you are carrying right now?",
+    "Say what is true. Not the tidy version — the one underneath it."
+  ],
+  reflect: [
+    "So: {t}. Let us not pretend that is small.",
+    "What I hear is {t}. Good. That is a real place to begin.",
+    "{t}. You have named it, which is more than most people manage."
+  ],
+  bridge: [
+    "Before I give you the verse, one question. Answer it honestly, to yourself if not to me.",
+    "One question first. The answer changes which part of the text you need.",
+    "Answer this before you read further."
+  ],
+  deliver: [
+    "Now. Here is what the text says to exactly this.",
+    "Read this slowly. It was spoken to a man who could not stand up.",
+    "Here. Not comfort — an instruction."
+  ],
+  close: [
+    "Sit with that before you reach for the next thing.",
+    "Do not agree with it yet. Test it against this week.",
+    "Read it again tomorrow. It will say something different."
+  ],
+  again: [
+    "What else is there?",
+    "Is there something under that one?",
+    "Say the next thing."
+  ],
+  unknown: [
+    "I did not find that clearly in the text. Name the feeling itself — angry, afraid, lost, ashamed, alone — and I will go straight to it.",
+    "That did not land against anything closely enough to be worth offering you. Try naming the emotion rather than the situation."
+  ]
+};
+
+/* One question per difficulty, aimed under the presenting complaint. */
+const PROBE = {
+  "Anxiety about the future": "What exactly are you afraid will happen — and which part of it was ever inside your control?",
+  "Grief and loss": "What do you miss most — their presence, or who you were when they were here?",
+  "Anger": "What did you want that you did not get? Anger is always downstream of a wanting.",
+  "Failure and setback": "Are you calling it a failure, or are you calling yourself one? They are not the same sentence.",
+  "Work stress and burnout": "Which of these have you cut first: sleep, food, rest, or people?",
+  "Not knowing what to do": "If nobody would be disappointed in you, which way would you already be walking?",
+  "Comparison and envy": "Whose life are you measuring against — and have you ever wanted the whole of it, or only the one part you can see?",
+  "A restless mind": "When did the mind last go quiet on its own? What were you doing?",
+  "Loneliness": "Are you without people, or among people who do not know you? The remedies differ.",
+  "Betrayal and difficult people": "Do you want them to change, or do you want to stop being held by what they did?",
+  "Fear of death and mortality": "Is it the ending you fear, or something left undone?",
+  "Desire, craving and never having enough": "When you last got the thing you wanted, how long did it hold?",
+  "Ego and pride": "What would you lose if you stopped being seen as the one who manages?",
+  "Doubt and loss of faith": "What would have to be true for you to trust something again?",
+  "Discipline and starting again": "How many times have you started? Say the number out loud — it is usually the proof, not the failure.",
+  "Duty, dharma and hard choices": "Which option would you choose if the cost fell on you alone?",
+  "Confidence and self-worth": "Whose voice is it, when you tell yourself you are not enough?"
+};
+
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const CHAT = { turns: [], stage: "idle", concept: null, said: "" };
+
+/* ---- history: kept on this device unless a login is chosen ---- */
+const HKEY = "gita.counsel.history";
+function saveChat(){
+  try { localStorage.setItem(HKEY, JSON.stringify(CHAT.turns.slice(-40))); } catch(e){}
+}
+function loadChat(){
+  try { return JSON.parse(localStorage.getItem(HKEY) || "[]"); } catch(e){ return []; }
+}
+function clearChat(){
+  CHAT.turns = []; try { localStorage.removeItem(HKEY); } catch(e){}
+  paintChat(); pushBot(pick(CV.open));
+}
+
+/* ---- voice ---- */
+let VOICE = null, VOICE_ON = true;
+function pickVoice(){
+  const vs = speechSynthesis.getVoices() || [];
+  const want = ["daniel","alex","google uk english male","microsoft guy","microsoft david",
+                "rishi","ravi","male"];
+  for (const w of want){
+    const m = vs.find(v => (v.name||"").toLowerCase().includes(w) && /en|hi/i.test(v.lang||""));
+    if (m) return m;
+  }
+  return vs.find(v => /^en/i.test(v.lang||"")) || vs[0] || null;
+}
+if (typeof speechSynthesis !== "undefined"){
+  speechSynthesis.onvoiceschanged = () => { VOICE = pickVoice(); };
+  setTimeout(() => { VOICE = pickVoice(); }, 400);
+}
+/* Deliberate pauses, low pitch, unhurried pace: the parameters that make a
+   voice sound certain rather than brisk. */
+function sayIt(text){
+  if (typeof speechSynthesis === "undefined") return;
+  speechSynthesis.cancel();
+  const parts = String(text).replace(/\s+/g, " ")
+    .split(/(?<=[.:;?!—])\s+/).filter(Boolean);
+  parts.forEach((p, i) => {
+    const u = new SpeechSynthesisUtterance(p);
+    if (VOICE) u.voice = VOICE;
+    u.pitch = 0.55;     // bass
+    u.rate  = 0.82;     // unhurried
+    u.volume = 1;
+    if (i < parts.length - 1) u.text = p + " ";
+    speechSynthesis.speak(u);
+    if (i < parts.length - 1){            // a held pause between sentences
+      const gap = new SpeechSynthesisUtterance(" ");
+      gap.volume = 0; gap.rate = 0.35;
+      speechSynthesis.speak(gap);
+    }
+  });
+}
+
+/* ---- rendering ---- */
+function pushBot(html, speakable){
+  CHAT.turns.push({ who: "g", html, say: speakable || html.replace(/<[^>]+>/g, " ") });
+  paintChat(); saveChat();
+}
+function pushUser(text){
+  CHAT.turns.push({ who: "u", html: esc(text), say: text });
+  paintChat(); saveChat();
+}
+function paintChat(){
+  const box = document.getElementById("cwBody");
+  if (!box) return;
+  box.innerHTML = CHAT.turns.map((t, i) => t.who === "u"
+    ? `<div class="cw-u">${t.html}</div>`
+    : `<div class="cw-g"><button class="cw-spk" title="Hear it" data-i="${i}">🔊</button><div>${t.html}</div></div>`
+  ).join("");
+  box.querySelectorAll(".cw-spk").forEach(b => b.onclick = () => sayIt(CHAT.turns[+b.dataset.i].say));
+  box.scrollTop = box.scrollHeight;
+}
+
+/* ---- the exchange ---- */
+async function cwSend(){
+  const el = document.getElementById("cwIn");
+  const text = (el.value || "").trim();
+  if (!text) return;
+  el.value = "";
+  pushUser(text);
+  await loadIndex();
+
+  if (CHAT.stage === "probing"){
+    // They answered the question. Now give the text.
+    pushBot(pick(CV.deliver));
+    const hits = searchVerses(CHAT.said + " " + text, CHAT.concept ? [CHAT.concept] : []);
+    renderHits(hits);
+    if (CHAT.concept) pushBot(`<p>${esc(CHAT.concept.f)}</p>`);
+    pushBot(pick(CV.close) + " " + pick(CV.again));
+    CHAT.stage = "idle"; CHAT.concept = null;
+    return;
+  }
+
+  const cs = matchConcepts(text);
+  CHAT.said = text;
+  if (!cs.length){
+    const hits = searchVerses(text, []);
+    if (!hits.length){ pushBot(pick(CV.unknown)); return; }
+    pushBot(pick(CV.deliver));
+    renderHits(hits);
+    pushBot(pick(CV.close));
+    return;
+  }
+  CHAT.concept = cs[0];
+  const short = text.length > 90 ? text.slice(0, 88).trim() + "…" : text;
+  const lead = /^I\b/.test(short) ? short : short.charAt(0).toLowerCase() + short.slice(1);
+  pushBot(pick(CV.reflect).replace("{t}", esc(lead)));
+  const q = PROBE[cs[0].n];
+  if (q){
+    pushBot(pick(CV.bridge) + `<p style="margin:8px 0 0"><b>${esc(q)}</b></p>`);
+    CHAT.stage = "probing";
+  } else {
+    pushBot(pick(CV.deliver));
+    renderHits(searchVerses(text, cs));
+    CHAT.stage = "idle";
+  }
+}
+
+function renderHits(hits){
+  hits.slice(0, 3).forEach(h => {
+    const x = V[byCV[h.c + "." + h.v]];
+    if (!x) return;
+    CHAT.turns.push({ who: "g", say: x.tr + ". " + x.en, html:
+      `<div class="cw-v">
+        <div class="cw-vh"><b>BG ${x.c}.${x.v}</b>
+          <button class="cw-open" onclick="jumpTo(${x.c},${x.v})">open →</button></div>
+        <div class="cw-sa">${esc(x.sa)}</div>
+        <div class="cw-tr">${esc(x.tr)}</div>
+        ${x.au ? `<audio controls preload="none" src="${x.au}"></audio>` : ""}
+        <div>${esc(x.en)}</div>
+      </div>` });
+  });
+  paintChat(); saveChat();
+}
+
+/* ---- 369 Hz ambience ---- */
+let TONE = null, TONE_ON = false;
+function toneToggle(on){
+  try {
+    if (on){
+      if (!TONE){
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator(), gain = ctx.createGain();
+        osc.type = "sine"; osc.frequency.value = 369;
+        gain.gain.value = 0.0;
+        osc.connect(gain).connect(ctx.destination); osc.start();
+        // Eased in: a tone that snaps on is startling.
+        gain.gain.linearRampToValueAtTime(0.012, ctx.currentTime + 2.5);
+        TONE = { ctx, osc, gain };
+      } else {
+        TONE.ctx.resume();
+        TONE.gain.gain.linearRampToValueAtTime(0.012, TONE.ctx.currentTime + 1.5);
+      }
+      TONE_ON = true;
+    } else if (TONE){
+      TONE.gain.gain.linearRampToValueAtTime(0, TONE.ctx.currentTime + 0.6);
+      TONE_ON = false;
+    }
+    localStorage.setItem("gita.tone", TONE_ON ? "1" : "0");
+  } catch(e){ /* audio unavailable; the page is unaffected */ }
+  const b = document.getElementById("toneBtn");
+  if (b){ b.textContent = TONE_ON ? "🔉 369 Hz on" : "🔇 369 Hz off"; b.dataset.on = TONE_ON ? "1" : "0"; }
+}
+
+/* today's date, and the tone beside it */
+document.getElementById('todayDate').textContent =
+  new Date().toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'});
+document.getElementById('toneBtn').onclick = () => toneToggle(!TONE_ON);
+
+const cwPanel = document.getElementById('cwPanel');
+const cwGate  = document.getElementById('cwGate');
+document.getElementById('cwLaunch').onclick = () => {
+  cwPanel.classList.toggle('on');
+  if (cwPanel.classList.contains('on')){
+    if (!localStorage.getItem('gita.counsel.mode')) cwGate.classList.add('on');
+    else if (!CHAT.turns.length){
+      CHAT.turns = loadChat();
+      if (!CHAT.turns.length) pushBot(pick(CV.open)); else paintChat();
+    }
+    setTimeout(()=>document.getElementById('cwIn').focus(),120);
+  }
+};
+document.getElementById('cwClose').onclick = () => cwPanel.classList.remove('on');
+document.getElementById('cwClear').onclick = clearChat;
+document.getElementById('cwSend').onclick = cwSend;
+document.getElementById('cwIn').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); cwSend(); }
+});
+cwGate.querySelectorAll('[data-mode]').forEach(b => b.onclick = () => {
+  if (b.disabled) return;
+  localStorage.setItem('gita.counsel.mode', b.dataset.mode);
+  cwGate.classList.remove('on');
+  CHAT.turns = loadChat();
+  if (!CHAT.turns.length) pushBot(pick(CV.open)); else paintChat();
+});
+/* Autoplay is blocked until a gesture, so the tone waits for one. */
+if (localStorage.getItem('gita.tone') === '1'){
+  const arm = () => { toneToggle(true); window.removeEventListener('pointerdown', arm); };
+  window.addEventListener('pointerdown', arm, {once:true});
+}
 </script>
 </body>
 </html>
