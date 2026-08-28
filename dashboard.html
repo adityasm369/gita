@@ -161,6 +161,17 @@ body{overflow-x:hidden}
 .b-deep p:last-child{margin-bottom:0}
 .b-deep details,details.b-deep{padding-bottom:6px}
 details.b-deep summary{cursor:pointer;list-style:revert}
+.askframe{border-left:3px solid var(--s5,#8b5cf6);background:var(--card,#00000008);
+  border-radius:10px;padding:12px 14px;margin-bottom:14px}
+.askframe p{margin:6px 0 0;line-height:1.7}
+.askhit{border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin-bottom:12px}
+.askref{display:flex;align-items:center;gap:9px;margin-bottom:8px;flex-wrap:wrap}
+.asksa{font-size:17px;line-height:1.85;margin-bottom:8px}
+.asktr{font-style:italic;color:var(--muted);font-size:13.5px;margin-bottom:4px}
+.asken{line-height:1.7;margin-top:6px}
+.askchip{border:1px solid var(--line);border-radius:20px;padding:5px 12px;font-size:12.5px;
+  cursor:pointer;background:var(--bg)}
+.askchip:hover{border-color:var(--s5,#8b5cf6)}
 </style>
 </head>
 <body>
@@ -176,11 +187,32 @@ details.b-deep summary{cursor:pointer;list-style:revert}
   <button data-v="overview" class="active">🏠 Overview</button>
   <button data-v="chapters">📖 18 Chapters</button>
   <button data-v="explore">🔍 Explore 700</button>
+  <button data-v="ask">🪔 Ask the Gita</button>
   <button data-v="wisdom">🧠 Inner Science</button>
   <button data-v="stats">📊 Statistics</button>
   <button data-v="quiz">🎯 Quiz</button>
 </nav>
 <main>
+
+<!-- ===================== ASK ===================== -->
+<div class="view" id="v-ask">
+  <div class="card">
+    <h3>🪔 Ask the Gita</h3>
+    <p class="sec">Describe what you are facing, in your own words. The question is matched
+      against all 701 verses — their translations, their commentary and their themes — and
+      you get back the verses that speak to it, with the Sanskrit, how to pronounce it, the
+      recitation, and a way through to the full commentary.</p>
+    <textarea id="askQ" rows="3" placeholder="I have been passed over at work again and I cannot stop comparing myself to everyone around me."
+      style="width:100%;padding:11px 13px;border-radius:10px;border:1px solid var(--line);
+             background:var(--bg);color:var(--fg);font:inherit;resize:vertical"></textarea>
+    <div style="display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap">
+      <button class="btn" id="askBtn">Ask</button>
+      <span class="muted" style="font-size:12px">English only &middot; runs entirely in your browser</span>
+    </div>
+    <div id="askChips" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:12px"></div>
+    <div id="askOut" style="margin-top:16px"></div>
+  </div>
+</div>
 
 <!-- ===================== OVERVIEW ===================== -->
 <div class="view on" id="v-overview">
@@ -760,6 +792,248 @@ document.addEventListener('keydown',e=>{
   if(e.target.tagName==='INPUT'||e.target.tagName==='SELECT')return;
   if(e.key==='ArrowLeft'&&idx>0){idx--;renderVerse()}
   if(e.key==='ArrowRight'&&idx<V.length-1){idx++;renderVerse()}
+});
+
+/* ============ CONCEPT LAYER ============ */
+/* What a person actually types, mapped to what the Gita actually calls it.
+
+   This layer exists because sparse retrieval matches words, and a person in
+   difficulty does not use the Gita's words. "I am burnt out and cannot face
+   Monday" shares nothing with a verse about steadiness in action. Each entry
+   below carries the everyday phrasing (k), the Gita's own vocabulary to search
+   with (x), a framing written for a reader in that state (f), and the verses
+   that address it most directly (v).
+
+   The framing is written here rather than generated: a person in distress is
+   owed a considered sentence, not an improvisation. */
+const CONCEPTS = [
+ {n:"Anxiety about the future",
+  k:["anxious","anxiety","worried","worry","fear","afraid","scared","panic","nervous","uncertain","insecure","what if","overthinking","dread","apprehensive","restless about"],
+  x:["fear","anxiety","doubt","future","result","fruit","outcome","attachment","steady","equanimity","calm"],
+  f:"Anxiety is almost always about a result you cannot command. The Gita's central move is to separate what is yours — the effort, the preparation, the quality of the act — from what never was: how it lands. That is not resignation. It is the only place your strength actually reaches.",
+  v:[[2,47],[2,48],[18,66],[2,14]]},
+
+ {n:"Grief and loss",
+  k:["grief","grieving","loss","lost","died","death","bereaved","mourning","miss him","miss her","passed away","heartbroken","funeral","gone forever"],
+  x:["grief","sorrow","death","body","soul","eternal","imperishable","birth","mourn","unborn"],
+  f:"The Gita does not tell the grieving to stop grieving. It begins exactly where you are — with Arjuna unable to stand up — and widens the frame: what you loved was never the part that ends. Read these slowly. They are meant to be sat with, not solved.",
+  v:[[2,13],[2,20],[2,22],[2,27]]},
+
+ {n:"Anger",
+  k:["angry","anger","rage","furious","resentment","irritated","frustrated","hate","bitter","temper","snapped","snapping","shouted","yelling","losing it"],
+  x:["anger","wrath","krodha","desire","delusion","memory","discrimination","ruin","control","senses"],
+  f:"The Gita traces anger to its root with unusual precision: attention settles on a thing, wanting grows, obstruction turns wanting into anger, and anger costs you judgement. The intervention is early in that chain, not late — long before the moment you are trying to control.",
+  v:[[2,62],[2,63],[16,21],[5,23]]},
+
+ {n:"Failure and setback",
+  k:["failed","failure","setback","rejected","rejection","did not work","lost my job","laid off","fired","defeat","gave up","not good enough","passed over","overlooked","demoted","turned down"],
+  x:["success","failure","equanimity","same","result","action","effort","steady","yoga","attachment"],
+  f:"Equanimity here is not indifference to outcome — it is refusing to let the outcome decide what you are worth. The verse defines yoga itself as evenness in success and failure. Notice that it makes them the same category of event: both are things that happened, neither is a verdict.",
+  v:[[2,48],[2,47],[6,5],[18,48]]},
+
+ {n:"Work stress and burnout",
+  k:["burnout","burnt out","exhausted","overworked","stressed","overwhelmed","too much","cannot cope","pressure","deadline","tired of work"],
+  x:["action","work","duty","moderation","excess","sleep","food","balance","yoga","sorrow","effort"],
+  f:"The Gita is explicit that the path is not available to the person who does too much, nor to the one who does too little. Moderation in eating, working, sleeping and recreation is stated as a precondition, not a luxury. Burnout is not a character failure; it is a violated precondition.",
+  v:[[6,16],[6,17],[3,8],[18,46]]},
+
+ {n:"Not knowing what to do",
+  k:["confused","indecision","cannot decide","don't know what to do","dont know what to do","do not know","whether","should i stay","should i leave","change career","career change","stuck","lost","direction","purpose","meaningless","which path","torn between","two options"],
+  x:["duty","dharma","doubt","confusion","mind","decide","refuge","surrender","path","instruct","disciple"],
+  f:"Arjuna's turning point is not receiving an answer — it is admitting he does not have one and asking properly. The whole dialogue follows from that admission. Being genuinely unable to see the way forward is treated as the honest beginning of the work, not a failure in it.",
+  v:[[2,7],[3,2],[18,63],[18,73]]},
+
+ {n:"Comparison and envy",
+  k:["comparison","comparing","envy","jealous","everyone else","behind","not enough","imposter","they are better","left behind"],
+  x:["own","duty","another","better","envy","hatred","equal","friend","enemy","same"],
+  f:"One of the Gita's sharpest lines: your own work, done imperfectly, is better than another's done well. Comparison assumes a single ladder everyone is on. The Gita denies the premise — you are answerable to your own path, and the person you are measuring yourself against is not on it.",
+  v:[[3,35],[18,47],[12,13],[12,14]]},
+
+ {n:"A restless mind",
+  k:["restless","cannot focus","distracted","overthinking","racing thoughts","cannot sleep","cannot meditate","monkey mind","scattered"],
+  x:["mind","restless","control","wind","practice","abhyasa","detachment","steady","difficult","again"],
+  f:"Arjuna calls the mind as hard to hold as the wind, and the reply does not dispute it — it concedes the difficulty and answers with repetition and non-attachment. The Gita's remedy for a restless mind is not a technique that works immediately, but a practice that works eventually.",
+  v:[[6,34],[6,35],[6,26],[8,8]]},
+
+ {n:"Loneliness",
+  k:["lonely","alone","isolated","no one understands","abandoned","nobody","disconnected","unloved"],
+  x:["alone","solitude","self","friend","same","dwell","heart","refuge","devotion","near"],
+  f:"The Gita offers a strange comfort: the self you are alone with is the thing worth meeting. It also says plainly that the one who sees the same essence everywhere is never truly cut off. Solitude and isolation are separated here — one is a condition, the other an interpretation.",
+  v:[[6,29],[6,30],[9,29],[6,5]]},
+
+ {n:"Betrayal and difficult people",
+  k:["betrayed","betrayal","cheated","backstabbed","toxic","difficult person","unfair","wronged","forgive","cannot forgive","lied to","let me down"],
+  x:["friend","enemy","equal","same","forgive","patience","malice","free","hatred","balanced"],
+  f:"The verses on the settled person describe someone equal towards friend and foe — not because the difference does not exist, but because their inner state has stopped being outsourced to other people's behaviour. Forgiveness here is listed as strength, never as weakness.",
+  v:[[12,13],[12,18],[16,3],[2,56]]},
+
+ {n:"Fear of death and mortality",
+  k:["death","dying","mortality","afraid to die","terminal","illness","end of life","meaning of death"],
+  x:["death","birth","soul","eternal","imperishable","body","garment","certain","born","destroy"],
+  f:"The Gita's answer to death is the oldest one it has: the part that ends was never the part that mattered. Whether or not that consoles you today, notice the tone — it is stated calmly, as a fact about the world, to a man who is about to face a great deal of it.",
+  v:[[2,20],[2,22],[2,27],[8,5]]},
+
+ {n:"Desire, craving and never having enough",
+  k:["desire","craving","greed","never enough","addicted","addiction","want more","materialistic","money","insatiable"],
+  x:["desire","greed","insatiable","fire","senses","enemy","contentment","satisfied","control","enjoy"],
+  f:"Desire is described as a fire that grows by being fed — the fault is not in wanting but in believing the wanting ends when it is satisfied. The Gita treats this as a structural error about how craving works, not as a moral failing in you.",
+  v:[[3,37],[3,39],[2,70],[16,21]]},
+
+ {n:"Ego and pride",
+  k:["ego","pride","arrogant","humiliated","insulted","my reputation","status","recognition","credit","not appreciated"],
+  x:["ego","pride","doer","action","nature","humility","modesty","free","mine","self"],
+  f:"The Gita's line on ego is not that you should think less of yourself, but that you should notice how much of what you call your doing was carried by causes you did not supply. That is meant to be a relief. Less of it was yours to carry than the ego insists.",
+  v:[[3,27],[18,58],[2,71],[13,8]]},
+
+ {n:"Doubt and loss of faith",
+  k:["doubt","doubtful","lost faith","cynical","dont believe","don't believe","skeptical","is any of this real"],
+  x:["doubt","faith","knowledge","ignorance","cut","sword","self","conviction","destroy","perish"],
+  f:"Doubt is taken seriously here, and treated as something to be resolved by knowledge rather than suppressed by belief. The instruction is to cut it with understanding — which presumes you are allowed to examine, question and test what you are told.",
+  v:[[4,40],[4,42],[4,39],[6,39]]},
+
+ {n:"Discipline and starting again",
+  k:["procrastinating","procrastination","lazy","no discipline","cannot start","habit","consistency","keep failing","relapse","start over"],
+  x:["practice","abhyasa","gradual","little","step","steady","effort","control","patience","firm"],
+  f:"The Gita's method for change is gradual and explicitly forgiving: step by step, with a mind held steady, withdrawing attention when it wanders — and doing that again. Repeated failure to hold attention is described as the normal texture of the practice, not evidence against you.",
+  v:[[6,25],[6,26],[6,35],[6,45]]},
+
+ {n:"Duty, dharma and hard choices",
+  k:["duty","dharma","obligation","right thing","moral","dilemma","should i","responsibility","family expects"],
+  x:["duty","dharma","own","action","abandon","imperfect","better","perform","fault","fire"],
+  f:"The Gita's position on hard duty is uncomfortable and worth sitting with: every course of action carries some fault, as fire carries smoke, so the search for the blameless option is itself the trap. You are asked to choose your own path imperfectly rather than another's well.",
+  v:[[3,35],[18,47],[18,48],[2,31]]},
+
+ {n:"Confidence and self-worth",
+  k:["confidence","self esteem","self worth","hate myself","worthless","not capable","self doubt","believe in myself"],
+  x:["self","friend","enemy","raise","lower","conquer","own","elevate","degrade","master"],
+  f:"One verse puts the whole matter in your hands: lift yourself by yourself, do not lower yourself; you are your own friend and your own enemy. It is not encouragement — it is an assignment, and it assumes you are capable of it.",
+  v:[[6,5],[6,6],[6,7],[2,3]]}
+];
+
+/* ============ ASK THE GITA — retrieval over the 701 ============
+   The index is 701 sparse TF-IDF vectors built from the translations, the
+   English commentary and the themes. It loads once, on first use, and scoring
+   happens here in the browser: no API key on a public page, no request that
+   can fail, no cost, and an answer in a few milliseconds. */
+let IDX = null, IDX_LOADING = null;
+
+function askToks(text){
+  const stop = new Set(("a an the and or but if then than that this these those of in on at to for with by from as is are was were be been being am do does did done have has had having i me my mine you your yours he him his she her it its they them their we us our what which who whom whose when where why how all any both each few more most other some such no nor not only own same so too very can will just should now would could may might must shall about into over under again further once here there also much many one two three said say says thus therefore hence").split(" "));
+  const sufs = ["ings","ing","edly","ed","ies","es","s","ly","ment","ness"];
+  const out = [];
+  for (let w of (text||"").toLowerCase().match(/[a-z]+/g) || []){
+    if (w.length < 3 || stop.has(w)) continue;
+    for (const s of sufs){ if (w.length > s.length + 3 && w.endsWith(s)){ w = w.slice(0, -s.length); break; } }
+    out.push(w);
+  }
+  return out;
+}
+
+async function loadIndex(){
+  if (IDX) return IDX;
+  if (!IDX_LOADING) IDX_LOADING = fetch("counsel-index.json").then(r => r.json()).then(d => (IDX = d));
+  return IDX_LOADING;
+}
+
+/* Which of the named difficulties this question is about. Matched on the
+   phrasing a person actually uses, not on the Gita's vocabulary. */
+function matchConcepts(q){
+  const low = " " + (q||"").toLowerCase().replace(/[^a-z ]+/g, " ").replace(/\s+/g, " ") + " ";
+  const scored = CONCEPTS.map(c => {
+    let hits = 0;
+    for (const k of c.k){ if (low.includes(" " + k + " ") || low.includes(k)) hits++; }
+    return {c, hits};
+  }).filter(x => x.hits > 0).sort((a,b) => b.hits - a.hits);
+  return scored.slice(0, 2).map(x => x.c);
+}
+
+function searchVerses(q, concepts){
+  if (!IDX) return [];
+  const V2I = IDX.vocab, IDF = IDX.idf;
+  const counts = {};
+  for (const w of askToks(q)) counts[w] = (counts[w] || 0) + 1;
+  // The question is expanded into the Gita's own words, at lower weight, so a
+  // literal match still outranks an inferred one.
+  for (const c of concepts){ for (const w of c.x){ for (const t of askToks(w)) counts[t] = (counts[t] || 0) + 0.6; } }
+
+  const qv = {};
+  let norm = 0;
+  for (const [w, n] of Object.entries(counts)){
+    const id = V2I[w]; if (id === undefined) continue;
+    const s = (1 + Math.log(n)) * (IDF[String(id)] || 1);
+    qv[id] = s; norm += s * s;
+  }
+  norm = Math.sqrt(norm) || 1;
+
+  const anchor = new Set();
+  concepts.forEach(c => c.v.forEach(([a,b]) => anchor.add(a + "." + b)));
+
+  const out = [];
+  for (const d of IDX.docs){
+    let dot = 0;
+    for (const [id, w] of Object.entries(qv)){ const dw = d.t[id]; if (dw) dot += w * dw; }
+    let score = dot / norm;
+    // A curated verse for this difficulty is lifted, never inserted blindly:
+    // it still has to have scored something to appear.
+    if (anchor.has(d.c + "." + d.v)) score += 0.28;
+    if (score > 0.02) out.push({c: d.c, v: d.v, score});
+  }
+  out.sort((a,b) => b.score - a.score);
+  return out.slice(0, 5);
+}
+
+function askCard(hit){
+  const x = V[byCV[hit.c + "." + hit.v]];
+  if (!x) return "";
+  return `<div class="askhit">
+    <div class="askref">
+      <span class="vnum">BG ${x.c}.${x.v}</span>
+      <span class="muted">${esc((CH[x.c-1]||{}).en||"").split("—")[0]}</span>
+      <span style="flex:1"></span>
+      <button class="btn ghost sm" onclick="jumpTo(${x.c},${x.v})">open verse →</button>
+    </div>
+    <div class="asksa">${esc(x.sa)}</div>
+    <div class="asktr"><b>Pronunciation</b> · ${esc(x.tr)}</div>
+    ${x.au ? `<audio controls preload="none" src="${x.au}" style="width:100%;max-width:340px;margin:8px 0"></audio>` : ""}
+    <div class="asken">${esc(x.en)}</div>
+  </div>`;
+}
+
+async function askGita(){
+  const q = ($("#askQ").value || "").trim();
+  const out = $("#askOut");
+  if (q.length < 8){ out.innerHTML = `<div class="muted">Describe the situation in a sentence or two — the more of it you put down, the better the match.</div>`; return; }
+  out.innerHTML = `<div class="muted">Reading the 701…</div>`;
+  await loadIndex();
+
+  const concepts = matchConcepts(q);
+  const hits = searchVerses(q, concepts);
+  if (!hits.length){
+    out.innerHTML = `<div class="muted">Nothing matched closely enough to be worth offering.
+      Try naming the feeling plainly — "I am angry with someone", "I failed at something", "I do not know what to do".</div>`;
+    return;
+  }
+  const framing = concepts.length
+    ? `<div class="askframe"><div class="lbl">${esc(concepts[0].n)}</div><p>${esc(concepts[0].f)}</p></div>`
+    : `<div class="askframe"><p>Here is what the text has closest to what you described. Read the verse,
+       then open it for the commentary — the reasoning is where the help usually is.</p></div>`;
+
+  out.innerHTML = framing + hits.map(askCard).join("") +
+    `<div class="muted" style="margin-top:14px;font-size:12px">
+       Matched from all 701 verses using their translations and commentary.
+       This is a reading aid, not counselling — if you are in real distress, please talk to someone.
+     </div>`;
+}
+
+$('#askBtn').onclick = askGita;
+$('#askQ').addEventListener('keydown', e => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) askGita(); });
+/* Starting points, so the box is never a blank stare. */
+$('#askChips').innerHTML = CONCEPTS.slice(0, 8).map(c =>
+  `<span class="askchip" data-n="${esc(c.n)}">${esc(c.n)}</span>`).join('');
+$$('#askChips .askchip').forEach(el => el.onclick = () => {
+  const c = CONCEPTS.find(x => x.n === el.dataset.n);
+  $('#askQ').value = c ? c.k.slice(0, 3).join(', ') : el.dataset.n;
+  askGita();
 });
 </script>
 </body>
