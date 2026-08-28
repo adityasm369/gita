@@ -161,16 +161,16 @@ body{overflow-x:hidden}
 .b-deep p:last-child{margin-bottom:0}
 .b-deep details,details.b-deep{padding-bottom:6px}
 details.b-deep summary{cursor:pointer;list-style:revert}
-.askframe{border-left:3px solid var(--s5,#8b5cf6);background:var(--card,#00000008);
+.askframe{border-left:3px solid var(--s5,#8b5cf6);background:var(--surface-2);
   border-radius:10px;padding:12px 14px;margin-bottom:14px}
 .askframe p{margin:6px 0 0;line-height:1.7}
 .askhit{border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin-bottom:12px}
 .askref{display:flex;align-items:center;gap:9px;margin-bottom:8px;flex-wrap:wrap}
 .asksa{font-size:17px;line-height:1.85;margin-bottom:8px}
-.asktr{font-style:italic;color:var(--muted);font-size:13.5px;margin-bottom:4px}
+.asktr{font-style:italic;color:var(--text-muted);font-size:13.5px;margin-bottom:4px}
 .asken{line-height:1.7;margin-top:6px}
 .askchip{border:1px solid var(--line);border-radius:20px;padding:5px 12px;font-size:12.5px;
-  cursor:pointer;background:var(--bg)}
+  cursor:pointer;background:var(--surface-1)}
 .askchip:hover{border-color:var(--s5,#8b5cf6)}
 /* ---- counsel widget ---- */
 #cwLaunch{position:fixed;right:22px;bottom:22px;z-index:60;width:56px;height:56px;
@@ -180,8 +180,12 @@ details.b-deep summary{cursor:pointer;list-style:revert}
 #cwLaunch:hover{transform:translateY(-2px)}
 #cwPanel{position:fixed;right:22px;bottom:88px;z-index:60;width:min(420px,calc(100vw - 32px));
   max-height:min(74vh,680px);display:none;flex-direction:column;
-  background:var(--bg);border:1px solid var(--line);border-radius:16px;overflow:hidden;
-  box-shadow:0 18px 60px rgba(0,0,0,.32)}
+  background:var(--surface-1);color:var(--text-primary);
+  border:1px solid var(--line);border-radius:16px;overflow:hidden;
+  /* Opaque, and lifted off whatever is behind it: the panel floats over page
+     text, so a translucent ground makes both unreadable. */
+  backdrop-filter:saturate(140%) blur(6px);
+  box-shadow:0 24px 70px rgba(0,0,0,.38),0 0 0 1px rgba(0,0,0,.05)}
 #cwPanel.on{display:flex}
 #cwHead{display:flex;align-items:center;gap:8px;padding:11px 14px;
   background:linear-gradient(145deg,#7c3aed,#b45309);color:#fff}
@@ -190,29 +194,40 @@ details.b-deep summary{cursor:pointer;list-style:revert}
 #cwGate{padding:16px;display:none}
 #cwGate.on{display:block}
 #cwGate p{margin:0 0 10px;font-size:13px;line-height:1.6}
-.cw-note{color:var(--muted);font-size:11.5px;margin:-4px 0 14px}
+.cw-note{color:var(--text-muted);font-size:11.5px;margin:-4px 0 14px}
 .cw-btn{width:100%;padding:10px;border-radius:10px;border:1px solid var(--line);
   background:var(--s5,#7c3aed);color:#fff;font:inherit;font-weight:600;cursor:pointer}
-.cw-btn.ghost{background:var(--bg);color:var(--muted);cursor:not-allowed}
-#cwBody{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px}
+.cw-btn.ghost{background:var(--surface-1);color:var(--text-muted);cursor:not-allowed}
+#cwBody{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px;
+  background:var(--surface-1);color:var(--text-primary)}
 .cw-g{display:flex;gap:8px;align-items:flex-start;line-height:1.62;font-size:14px}
 .cw-g p{margin:6px 0 0}
 .cw-spk{background:none;border:0;cursor:pointer;font-size:14px;opacity:.55;padding:0;line-height:1.4}
 .cw-spk:hover{opacity:1}
 .cw-u{align-self:flex-end;max-width:85%;background:var(--s5,#7c3aed);color:#fff;
   padding:8px 12px;border-radius:14px 14px 4px 14px;font-size:14px;line-height:1.55}
-.cw-v{border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:13.5px}
+.cw-v{border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:13.5px;
+  background:var(--surface-2)}
 .cw-vh{display:flex;align-items:center;gap:8px;margin-bottom:6px}
 .cw-open{margin-left:auto;background:none;border:0;color:var(--s5,#7c3aed);cursor:pointer;font-size:12px}
 .cw-sa{line-height:1.8;margin-bottom:5px}
-.cw-tr{font-style:italic;color:var(--muted);font-size:12.5px;margin-bottom:6px}
+.cw-tr{font-style:italic;color:var(--text-muted);font-size:12.5px;margin-bottom:6px}
 .cw-v audio{width:100%;height:32px;margin:6px 0}
-#cwFoot{display:flex;gap:8px;padding:10px;border-top:1px solid var(--line)}
+#cwFoot{display:flex;gap:8px;padding:10px;border-top:1px solid var(--line);
+  background:var(--surface-2)}
 #cwIn{flex:1;resize:none;border:1px solid var(--line);border-radius:10px;padding:8px 10px;
-  font:inherit;font-size:14px;background:var(--bg);color:var(--fg)}
+  font:inherit;font-size:14px;background:var(--surface-1);color:var(--text-primary)}
+#cwGate{background:var(--surface-1);color:var(--text-primary)}
 #cwSend{border:0;border-radius:10px;padding:0 16px;background:var(--s5,#7c3aed);color:#fff;
   font:inherit;font-weight:600;cursor:pointer}
 @media(max-width:520px){#cwPanel{right:8px;left:8px;width:auto;bottom:80px}}
+#cwClip{cursor:pointer;font-size:15px;opacity:.9}
+#cwFiles{display:flex;flex-wrap:wrap;gap:6px;padding:0 10px}
+#cwFiles:empty{display:none}
+.cw-file{font-size:11.5px;border:1px solid var(--line);border-radius:14px;
+  padding:3px 8px;color:var(--text-muted)}
+.cw-file button{background:none;border:0;cursor:pointer;color:var(--text-muted);padding:0 0 0 4px}
+.cw-think{font-size:13px;color:var(--text-muted);font-style:italic}
 </style>
 </head>
 <body>
@@ -247,7 +262,7 @@ details.b-deep summary{cursor:pointer;list-style:revert}
       recitation, and a way through to the full commentary.</p>
     <textarea id="askQ" rows="3" placeholder="I have been passed over at work again and I cannot stop comparing myself to everyone around me."
       style="width:100%;padding:11px 13px;border-radius:10px;border:1px solid var(--line);
-             background:var(--bg);color:var(--fg);font:inherit;resize:vertical"></textarea>
+             background:var(--surface-1);color:var(--text-primary);font:inherit;resize:vertical"></textarea>
     <div style="display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap">
       <button class="btn" id="askBtn">Ask</button>
       <span class="muted" style="font-size:12px">English only &middot; runs entirely in your browser</span>
@@ -360,6 +375,9 @@ details.b-deep summary{cursor:pointer;list-style:revert}
     <b>Counsel</b>
     <span class="cw-sub">from the 701</span>
     <span style="flex:1"></span>
+    <button id="cwSave" title="Save this conversation to your device">💾</button>
+    <label id="cwClip" title="Bring back up to 2 saved files (1 MB each)">📎
+      <input type="file" id="cwFile" accept=".txt,.md,.json" multiple hidden></label>
     <button id="cwClear" title="Start again">⟲</button>
     <button id="cwClose" title="Close">✕</button>
   </div>
@@ -371,6 +389,7 @@ details.b-deep summary{cursor:pointer;list-style:revert}
     <p class="cw-note">Not built yet — see the note in the project README.</p>
   </div>
   <div id="cwBody"></div>
+  <div id="cwFiles"></div>
   <div id="cwFoot">
     <textarea id="cwIn" rows="2" placeholder="Say what is true…"></textarea>
     <button id="cwSend">Send</button>
@@ -1272,8 +1291,16 @@ async function cwSend(){
 
   if (CHAT.stage === "probing"){
     // They answered the question. Now give the text.
+    const both = CHAT.said + " " + text;
+    const hits = searchVerses(both, CHAT.concept ? [CHAT.concept] : []);
+    const mm = await askModel(both, hits);
+    if (mm && mm.text){
+      pushBot(mm.text.split(/\n{2,}/).map(p => `<p>${esc(p)}</p>`).join(""));
+      renderHits(hits);
+      CHAT.stage = "idle"; CHAT.concept = null;
+      return;
+    }
     pushBot(pick(CV.deliver));
-    const hits = searchVerses(CHAT.said + " " + text, CHAT.concept ? [CHAT.concept] : []);
     renderHits(hits);
     if (CHAT.concept) pushBot(`<p>${esc(CHAT.concept.f)}</p>`);
     pushBot(pick(CV.close) + " " + pick(CV.again));
@@ -1281,7 +1308,19 @@ async function cwSend(){
     return;
   }
 
-  const cs = matchConcepts(text);
+  const cs0 = matchConcepts(text);
+  // A model answers when one is configured; otherwise the written coach does.
+  // The fallback is silent on purpose -- a reader in difficulty should not be
+  // shown an infrastructure message.
+  const m = await askModel(text, searchVerses(text, cs0));
+  if (m && m.text){
+    pushBot(m.text.split(/\n{2,}/).map(p => `<p>${esc(p)}</p>`).join(""));
+    renderHits(searchVerses(text, cs0));
+    CHAT.stage = "idle"; CHAT.concept = null;
+    return;
+  }
+
+  const cs = cs0;
   CHAT.said = text;
   if (!cs.length){
     const hits = searchVerses(text, []);
@@ -1388,6 +1427,109 @@ if (localStorage.getItem('gita.tone') === '1'){
   const arm = () => { toneToggle(true); window.removeEventListener('pointerdown', arm); };
   window.addEventListener('pointerdown', arm, {once:true});
 }
+
+/* ============ FILES & MODEL ============ */
+/* ---- keeping a conversation without keeping it on a server ----
+   Nothing about a person is stored here. They save the exchange to their own
+   machine, and bring it back when they want to be remembered. Two files, a
+   megabyte each, read in the browser.
+
+   One thing stated plainly in the UI rather than buried: when a model answers,
+   the text of those notes travels to the model to be read. It is never written
+   to this server, but it does leave the device. Anything else would require
+   the model to run locally, which it does not. */
+const ATT = [];                       // [{name, text}]
+const MAXF = 2, MAXB = 1024 * 1024;
+
+function attachRender(){
+  const el = document.getElementById("cwFiles");
+  if (!el) return;
+  el.innerHTML = ATT.map((f, i) =>
+    `<span class="cw-file">${esc(f.name)} <button data-i="${i}" title="Remove">✕</button></span>`).join("");
+  el.querySelectorAll("button").forEach(b => b.onclick = () => {
+    ATT.splice(+b.dataset.i, 1); attachRender();
+  });
+}
+
+function attachFiles(list){
+  const files = [...list];
+  for (const f of files){
+    if (ATT.length >= MAXF){ pushBot(`Two files is the limit. Remove one first.`); break; }
+    if (f.size > MAXB){ pushBot(`<b>${esc(f.name)}</b> is over 1 MB. Trim it and try again.`); continue; }
+    const r = new FileReader();
+    r.onload = () => {
+      ATT.push({name: f.name, text: String(r.result || "").slice(0, MAXB)});
+      attachRender();
+      pushBot(`Read <b>${esc(f.name)}</b>. I will keep it in mind while we talk. It is not stored anywhere.`);
+    };
+    r.readAsText(f);
+  }
+}
+
+function saveConversation(){
+  if (!CHAT.turns.length){ pushBot("Nothing to save yet."); return; }
+  const when = new Date().toISOString().slice(0, 16).replace("T", " ");
+  const body = CHAT.turns.map(t =>
+    (t.who === "u" ? "ME:  " : "GITA: ") + (t.say || "").replace(/\s+/g, " ").trim()
+  ).join("\n\n");
+  const blob = new Blob([`Bhagavad Gita — counsel, ${when}\n${"-".repeat(52)}\n\n${body}\n`],
+                        {type: "text/plain;charset=utf-8"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `gita-counsel-${when.replace(/[: ]/g, "-")}.txt`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  pushBot("Saved to your device. Bring it back with the paperclip whenever you want me to remember this.");
+}
+
+/* ---- the model, when one is configured ---- */
+let THINK = null;
+function thinking(on){
+  const box = document.getElementById("cwBody");
+  if (!box) return;
+  let el = document.getElementById("cwThink");
+  if (on){
+    if (!el){
+      el = document.createElement("div");
+      el.id = "cwThink"; el.className = "cw-think";
+      box.appendChild(el);
+    }
+    let t = 0;
+    el.textContent = "considering…";
+    clearInterval(THINK);
+    THINK = setInterval(() => { t += 1; el.textContent = `considering… ${t}s`; }, 1000);
+    box.scrollTop = box.scrollHeight;
+  } else {
+    clearInterval(THINK); THINK = null;
+    if (el) el.remove();
+  }
+}
+
+async function askModel(question, hits){
+  const verses = hits.slice(0, 4).map(h => {
+    const x = V[byCV[h.c + "." + h.v]];
+    return x ? `BG ${x.c}.${x.v} — ${x.en}` : "";
+  }).filter(Boolean).join("\n");
+  const history = CHAT.turns.slice(-8)
+    .map(t => (t.who === "u" ? "Them: " : "You: ") + (t.say || "").slice(0, 400)).join("\n");
+  const context = ATT.map(f => `--- ${f.name} ---\n${f.text}`).join("\n\n").slice(0, 40000);
+
+  thinking(true);
+  try {
+    const r = await fetch("/api/counsel", {
+      method: "POST", headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({question, verses, history, context})
+    }).then(x => x.json());
+    return r && r.ok ? r : null;
+  } catch (e) {
+    return null;
+  } finally {
+    thinking(false);
+  }
+}
+
+document.getElementById('cwSave').onclick = saveConversation;
+document.getElementById('cwFile').onchange = e => { attachFiles(e.target.files); e.target.value = ''; };
 </script>
 </body>
 </html>
