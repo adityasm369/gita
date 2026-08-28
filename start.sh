@@ -15,6 +15,8 @@ for a in "$@"; do
 done
 
 mkdir -p "$d/data"
+# Public: the Gita dashboard is study material, not private data.
+SS_PUBLIC="${SS_PUBLIC:-1}" \
 SS_ROOT="$d" SS_INDEX="dashboard.html" SS_SLUG="gita" SS_HOST="$HOST" SS_PORT="${SS_PORT:-8771}" \
   nohup python3 /data/projects/_shared/serve_static.py > "$d/data/server.log" 2>&1 &
 echo $! > "$d/data/pid"
