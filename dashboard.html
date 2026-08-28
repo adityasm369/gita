@@ -228,6 +228,8 @@ details.b-deep summary{cursor:pointer;list-style:revert}
   padding:3px 8px;color:var(--text-muted)}
 .cw-file button{background:none;border:0;cursor:pointer;color:var(--text-muted);padding:0 0 0 4px}
 .cw-think{font-size:13px;color:var(--text-muted);font-style:italic}
+.lg-lens{border-left:4px solid var(--saffron)}
+.lg-lens .lt{color:var(--saffron)}
 </style>
 </head>
 <body>
@@ -549,6 +551,13 @@ function openChapter(n){
     <div style="margin-top:7px"><span class="pill ck" style="background:${CKHEX[st.chakra]}">${st.chakra} chakra</span>
     ${n>1?`<button class="btn ghost sm" onclick="openChapter(${n-1})">← Ch ${n-1}</button>`:''}
     ${n<18?`<button class="btn ghost sm" onclick="openChapter(${n+1})">Ch ${n+1} →</button>`:''}</div>
+    <div class="lens lg-lens">
+      <div class="lt">🎧 Hear this chapter recited</div>
+      <p style="margin:6px 0 0">Dr. Vijaya Godbole's rendition of all eighteen chapters, published by
+        <b>Geeta Pariwar</b>.
+        <a href="https://www.learngeeta.com/vijaya-godbole-audios" target="_blank" rel="noopener">Listen on learngeeta.com &nearr;</a>
+        <span class="muted" style="display:block;margin-top:4px;font-size:12px">Their recording, on their site. Per-verse recitation plays inline on each shloka below.</span></p>
+    </div>
     ${LENSES.map(([k,t,col])=>`<div class="lens" style="border-left:4px solid ${col}"><div class="lt" style="color:${col}">${t}</div><p>${c[k]}</p></div>`).join('')}
     ${kvs.length?`<div class="lens" style="border-left:4px solid var(--s5)"><div class="lt" style="color:var(--s5)">⭐ Landmark shlokas of this chapter</div>
       ${kvs.map(k=>`<p style="margin:6px 0"><span class="vlink" onclick="jumpTo(${k.c},${k.v})">BG ${k.c}.${k.v}</span> — <b>${k.t}.</b> ${k.d}</p>`).join('')}</div>`:''}
