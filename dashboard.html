@@ -1239,7 +1239,31 @@ if (typeof speechSynthesis !== "undefined"){
 }
 /* Deliberate pauses, low pitch, unhurried pace: the parameters that make a
    voice sound certain rather than brisk. */
-function sayIt(text){
+/* Bhashini first when it is configured -- an Indian-trained voice, free, and
+   the same on every device. The browser voice is the fallback: always there,
+   but it sounds like whatever the reader's machine happens to ship. */
+let VOICE_SRV = null;          // null = unknown, true/false once tried
+async function sayIt(text){
+  const clean = String(text || "").replace(/\s+/g, " ").trim();
+  if (!clean) return;
+  if (VOICE_SRV !== false){
+    try {
+      const r = await fetch("/api/voice", {method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({text: clean.slice(0, 1800)})}).then(x => x.json());
+      if (r && r.ok && r.audio){
+        VOICE_SRV = true;
+        const a = new Audio("data:audio/wav;base64," + r.audio);
+        a.play().catch(() => sayLocal(clean));
+        return;
+      }
+      VOICE_SRV = false;
+    } catch (e) { VOICE_SRV = false; }
+  }
+  sayLocal(clean);
+}
+
+function sayLocal(text){
   if (typeof speechSynthesis === "undefined") return;
   speechSynthesis.cancel();
   const parts = String(text).replace(/\s+/g, " ")
