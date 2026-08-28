@@ -156,6 +156,11 @@ body{overflow-x:hidden}
   *,*::before,*::after{transition-duration:.01ms !important;animation-duration:.01ms !important}
   .chcard:hover{transform:none}
 }
+.b-deep{border-left:3px solid var(--s5,#8b5cf6)}
+.b-deep p{margin:0 0 10px;line-height:1.68}
+.b-deep p:last-child{margin-bottom:0}
+.b-deep details,details.b-deep{padding-bottom:6px}
+details.b-deep summary{cursor:pointer;list-style:revert}
 </style>
 </head>
 <body>
@@ -471,6 +476,37 @@ function runSearch(){
     }).join('')+(hits.length>120?`<div class="muted" style="padding:8px">…and ${hits.length-120} more — refine your search</div>`:'');
 }
 window.jumpTo=(c,v)=>{goTab('explore');idx=byCV[c+'.'+v]??0;renderVerse();setTimeout(()=>$('#verseView').scrollIntoView({behavior:'smooth',block:'start'}),60)};
+/* Deep commentary lives in commentary/<chapter>.json rather than in this file:
+   9MB of prose inlined would quadruple the page for text you only want on the
+   verse in front of you. Fetched when a chapter is first opened, then kept. */
+const COMM = {};
+async function loadCommentary(ch){
+  if (COMM[ch]) return COMM[ch];
+  try {
+    COMM[ch] = await fetch(`commentary/${ch}.json`).then(r => r.ok ? r.json() : {});
+  } catch (e) { COMM[ch] = {}; }
+  return COMM[ch];
+}
+function commentaryHtml(x){
+  const d = (COMM[x.c] || {})[String(x.v)];
+  if (!d) return '<div class="block b-deep"><div class="lbl">Commentary</div>'
+    + '<span class="muted">loading…</span></div>';
+  const para = t => String(t).split(/\n{2,}|(?<=[।॥.])\s{2,}/)
+    .filter(s => s.trim()).map(s => `<p>${esc(s.trim())}</p>`).join('');
+  let out = '';
+  if (d.en) out += `<div class="block b-deep"><div class="lbl">Commentary — Swami Sivananda</div>${para(d.en)}</div>`;
+  if (d.hi) out += `<div class="block b-deep"><div class="lbl">व्याख्या — स्वामी रामसुखदास</div>${para(d.hi)}</div>`;
+  const sa = [['sa_shankara','शाङ्करभाष्यम् — Shankaracharya'],
+              ['sa_ramanuja','रामानुजभाष्यम् — Ramanujacharya'],
+              ['sa_madhusudan','मधुसूदनी — Madhusudan Saraswati']]
+    .filter(([k]) => d[k]);
+  if (sa.length) out += `<details class="block b-deep"><summary class="lbl">`
+    + `संस्कृत भाष्य — classical commentaries (${sa.length})</summary>`
+    + sa.map(([k,l]) => `<div style="margin-top:10px"><div class="lbl">${l}</div>${para(d[k])}</div>`).join('')
+    + `</details>`;
+  return out;
+}
+
 function renderVerse(){
   const x=V[idx], key=kvMap[x.c+'.'+x.v];
   const L=(on,cls,lbl,body,extra='')=>on?`<div class="block ${cls}"><div class="lbl">${lbl}${extra}</div>${body}</div>`:'';
@@ -493,6 +529,7 @@ function renderVerse(){
     ${x.en_gam?`<div class="block b-en"><div class="lbl">English — Swami Gambirananda <span class="muted">(after Shankara)</span></div>${esc(x.en_gam)}</div>`:''}
     ${x.en_adi?`<div class="block b-en"><div class="lbl">English — Swami Adidevananda <span class="muted">(after Ramanuja)</span></div>${esc(x.en_adi)}</div>`:''}
     ${x.hi_ram?`<div class="block b-en"><div class="lbl">हिन्दी — स्वामी रामसुखदास</div>${esc(x.hi_ram)}</div>`:''}
+    ${commentaryHtml(x)}
     ${x.au?`<div class="block b-au"><div class="lbl">🎧 Recitation</div>
       <audio controls preload="none" src="${x.au}" style="width:100%;max-width:420px"></audio>
       <div class="muted" style="margin-top:6px;font-size:12px">Public-domain recitation &middot;
@@ -505,6 +542,13 @@ function renderVerse(){
     </div>
   </div>`;
 }
+/* Paint immediately, then repaint once the chapter's commentary is in. */
+const _renderVerse = renderVerse;
+renderVerse = function(){
+  _renderVerse();
+  const x = V[idx];
+  if (x && !COMM[x.c]) loadCommentary(x.c).then(() => { if (V[idx] === x) _renderVerse(); });
+};
 $('#randomBtn').onclick=()=>{idx=Math.floor(Math.random()*V.length);goTab('explore');renderVerse()};
 
 /* ============ WISDOM ============ */
